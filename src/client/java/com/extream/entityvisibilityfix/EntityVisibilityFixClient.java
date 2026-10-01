@@ -10,7 +10,7 @@ public final class EntityVisibilityFixClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        System.out.println("[EntityVisibilityFix] 0.4.0 loaded - player skin + framed-map render-type fixes ON");
+        System.out.println("[EntityVisibilityFix] 0.6.0 loaded - Derivative skin fix + framed-map compatibility tracking ON");
     }
 
     public static void beginAvatar() {
@@ -33,7 +33,10 @@ public final class EntityVisibilityFixClient implements ClientModInitializer {
         return ENABLED && FIX_MAPS && FRAMED_MAP_DEPTH.get() > 0;
     }
 
+    // Only player/avatar rendering is allowed to change RenderType.
+    // Framed maps keep Minecraft 26.3's native vertex format to avoid the
+    // v0.4 "Missing elements in vertex" crash.
     public static boolean shouldForceOpaque() {
-        return ENABLED && (RENDERING_AVATAR.get() || renderingFramedMap());
+        return ENABLED && RENDERING_AVATAR.get();
     }
 }
