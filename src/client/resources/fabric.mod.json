@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "entityvisibilityfix",
+  "version": "${version}",
+  "name": "Entity Visibility Fix",
+  "description": "Experimental Minecraft 26.3 client fix that forces player skin body rendering away from the translucent entity path. Made to test Derivative + Iris invisible-player issues.",
+  "authors": ["Extream + ChatGPT"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.extream.entityvisibilityfix.EntityVisibilityFixClient"]
+  },
+  "mixins": [
+    { "config": "entityvisibilityfix.client.mixins.json", "environment": "client" }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  },
+  "suggests": { "iris": "*" }
+}
