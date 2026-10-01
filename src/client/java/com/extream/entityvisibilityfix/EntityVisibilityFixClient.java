@@ -5,19 +5,35 @@ import net.fabricmc.api.ClientModInitializer;
 public final class EntityVisibilityFixClient implements ClientModInitializer {
     public static volatile boolean ENABLED = true;
     public static volatile boolean FIX_MAPS = true;
-    private static final ThreadLocal<Integer> ENTITY_DEPTH = ThreadLocal.withInitial(() -> 0);
     private static final ThreadLocal<Boolean> RENDERING_AVATAR = ThreadLocal.withInitial(() -> false);
+    private static final ThreadLocal<Integer> FRAMED_MAP_DEPTH = ThreadLocal.withInitial(() -> 0);
 
     @Override
     public void onInitializeClient() {
-        System.out.println("[EntityVisibilityFix] 0.2.0 loaded - player skin + item-frame map compatibility fixes ON");
+        System.out.println("[EntityVisibilityFix] 0.3.0 loaded - player skin + targeted item-frame map fixes ON");
     }
 
-    public static void beginEntity() { if (ENABLED && FIX_MAPS) ENTITY_DEPTH.set(ENTITY_DEPTH.get() + 1); }
-    public static void endEntity() { ENTITY_DEPTH.set(Math.max(0, ENTITY_DEPTH.get() - 1)); }
-    public static boolean renderingEntity() { return ENABLED && FIX_MAPS && ENTITY_DEPTH.get() > 0; }
+    public static void beginAvatar() {
+        if (ENABLED) RENDERING_AVATAR.set(true);
+    }
 
-    public static void beginAvatar() { if (ENABLED) RENDERING_AVATAR.set(true); }
-    public static void endAvatar() { RENDERING_AVATAR.set(false); }
-    public static boolean shouldForceOpaque() { return ENABLED && (RENDERING_AVATAR.get() || renderingEntity()); }
+    public static void endAvatar() {
+        RENDERING_AVATAR.set(false);
+    }
+
+    public static void beginFramedMap() {
+        if (ENABLED && FIX_MAPS) FRAMED_MAP_DEPTH.set(FRAMED_MAP_DEPTH.get() + 1);
+    }
+
+    public static void endFramedMap() {
+        FRAMED_MAP_DEPTH.set(Math.max(0, FRAMED_MAP_DEPTH.get() - 1));
+    }
+
+    public static boolean renderingFramedMap() {
+        return ENABLED && FIX_MAPS && FRAMED_MAP_DEPTH.get() > 0;
+    }
+
+    public static boolean shouldForceOpaque() {
+        return ENABLED && (RENDERING_AVATAR.get() || renderingFramedMap());
+    }
 }
