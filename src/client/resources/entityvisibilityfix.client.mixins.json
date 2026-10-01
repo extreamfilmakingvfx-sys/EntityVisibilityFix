@@ -6,6 +6,7 @@
   "client": [
     "LivingEntityRendererMixin",
     "ItemFrameRendererMixin",
+    "MapRendererMixin",
     "RenderTypesMixin"
   ],
   "injectors": { "defaultRequire": 1 }
