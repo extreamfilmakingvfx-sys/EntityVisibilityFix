@@ -10,7 +10,7 @@ public final class EntityVisibilityFixClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        System.out.println("[EntityVisibilityFix] 0.3.0 loaded - player skin + targeted item-frame map fixes ON");
+        System.out.println("[EntityVisibilityFix] 0.4.0 loaded - player skin + framed-map render-type fixes ON");
     }
 
     public static void beginAvatar() {
