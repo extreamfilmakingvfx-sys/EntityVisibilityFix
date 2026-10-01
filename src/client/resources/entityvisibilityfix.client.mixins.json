@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_25",
   "client": [
     "LivingEntityRendererMixin",
+    "EntityRendererMixin",
     "RenderTypesMixin"
   ],
   "injectors": { "defaultRequire": 1 }
