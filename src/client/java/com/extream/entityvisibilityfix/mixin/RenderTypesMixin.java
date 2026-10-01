@@ -11,33 +11,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(RenderTypes.class)
 public abstract class RenderTypesMixin {
-    // Existing player-skin fix. Keep this behavior unchanged.
+    // Keep the original working player-skin fix only.
+    // IMPORTANT: framed maps must NOT be converted to entityCutout here.
+    // MapRenderer 26.3 supplies a different vertex format; replacing its
+    // RenderType caused "Missing elements in vertex" and crashed the client.
     @Inject(method = "entityTranslucent(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/rendertype/RenderType;",
             at = @At("HEAD"), cancellable = true)
     private static void evf$forcePlayerCutout(Identifier texture, CallbackInfoReturnable<RenderType> cir) {
-        if (EntityVisibilityFixClient.shouldForceOpaque()) {
-            cir.setReturnValue(RenderTypes.entityCutout(texture));
-        }
-    }
-
-    // Minecraft 26.3 MapRenderer submits the dynamic map texture through the
-    // text-family render path. Derivative loses that path when the map is
-    // submitted from ItemFrameRenderer, even though the same map works in hand.
-    // While ItemFrameRenderer is actively submitting a map, reroute these
-    // textured quads to entityCutout so Iris/Derivative sees an opaque textured
-    // feature instead of the broken framed-map/text feature.
-    @Inject(method = "text(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/rendertype/RenderType;",
-            at = @At("HEAD"), cancellable = true, require = 0)
-    private static void evf$framedMapText(Identifier texture, CallbackInfoReturnable<RenderType> cir) {
-        if (EntityVisibilityFixClient.renderingFramedMap()) {
-            cir.setReturnValue(RenderTypes.entityCutout(texture));
-        }
-    }
-
-    @Inject(method = "textPolygonOffset(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/rendertype/RenderType;",
-            at = @At("HEAD"), cancellable = true, require = 0)
-    private static void evf$framedMapTextPolygonOffset(Identifier texture, CallbackInfoReturnable<RenderType> cir) {
-        if (EntityVisibilityFixClient.renderingFramedMap()) {
+        if (EntityVisibilityFixClient.shouldForceOpaque() && !EntityVisibilityFixClient.renderingFramedMap()) {
             cir.setReturnValue(RenderTypes.entityCutout(texture));
         }
     }
